@@ -1,0 +1,23 @@
+<head></head>
+<body>
+  <h1>Login Panel #{{panel}}</h1>
+  <form action="Challenges/LoginPanels/panel{{panel}}" method="POST">
+    <input type="hidden" id="path" name="path" value="{{path}}">
+    <input type="hidden" id="action" name="action" value="login">
+    <label for="user">Username: </label>
+    <br>
+    <input type="text" id="user" name="user">
+    <br>
+    <label for="pwd">Password: </label>
+    <br>
+    <input type="password" id="pwd" name="pwd">
+    <br>
+    <input type="submit" value="Submit">
+  </form>
+  {{% if debug is defined %}}
+    {{% if debugMode %}}
+      <h5>Debug Output</h5>
+      <p>{{debug}}</p>
+    {{% endif %}}
+  {{% endif %}}
+</body>
