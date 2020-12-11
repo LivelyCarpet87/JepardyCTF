@@ -27,7 +27,7 @@ def panel0():
 		debugMode = request.cookies.get('Panel0DebugMode',False)
 		user = request.form["user"]
 		pwd = request.form["pwd"]
-		success, debug = panel0.panel0(user,pwd)
+		success, debug, message = panel0.panel0(user,pwd)
 		if success:
 			teamDataLock.acquire()
 			data.teams["progress"]["loginpanel0"] = True
@@ -36,7 +36,8 @@ def panel0():
 			panel=0,
 			solved=data.teams["progress"].get("loginpanel0",False),
 			debugMode=debugMode,
-			debug=debug
+			debug=debug,
+			message=message
 		)
 
 @loginpanels.route('/panel1',methods=['GET','POST'])
@@ -57,7 +58,7 @@ def panel1():
 		debugMode = request.cookies.get('Panel1DebugMode',False)
 		user = request.form["user"]
 		pwd = request.form["pwd"]
-		success, debug = panel1.panel1(user,pwd)
+		success, debug, message = panel1.panel1(user,pwd)
 		if success:
 			teamDataLock.acquire()
 			data.teams["progress"]["loginpanel1"] = True
@@ -66,5 +67,6 @@ def panel1():
 			panel=1,
 			solved=data.teams["progress"].get("loginpanel1",False),
 			debugMode=debugMode,
-			debug=debug
+			debug=debug,
+			message=message
 		)

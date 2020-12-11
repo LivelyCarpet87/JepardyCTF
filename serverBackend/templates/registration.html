@@ -1,0 +1,97 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <style>
+    .tutorial-wrapper{
+        width: 100%;
+    }
+    .tutorial-wrapper form{
+        background-color: #ffc;
+        border: 1px solid #cc9;
+        padding: 10px;
+        font-family: verdana;
+        width: 75%;
+        font-size: 1em;
+    }
+    .field-wrapper{
+        margin: 2px 0 2px 0;
+        padding: 0;
+    }
+    .tutorial-wrapper label{
+        float: left;
+        text-align: right;
+        margin: 0 5px 0 0;
+        width: 30%;
+    }
+    .tutorial-wrapper input{
+        width: 200px;
+        border: 1px solid #cc9;
+    }
+    .confirm-message{
+        margin: 0;
+        padding: 0;
+        font-size: .8em;
+    }
+</style>
+    <script type="text/javascript">
+function checkPass()
+{
+    //Store the password field objects into variables ...
+    var password = document.getElementById('password2');
+    var confirm  = document.getElementById('confirm2');
+    //Store the Confirmation Message Object ...
+    var message = document.getElementById('confirm-message2');
+    //Set the colors we will be using ...
+    var good_color = "#66cc66";
+    var bad_color  = "#ff6666";
+    //Compare the values in the password field
+    //and the confirmation field
+    if(password.value == confirm.value){
+        //The passwords match.
+        //Set the color to the good color and inform
+        //the user that they have entered the correct password
+        confirm.style.backgroundColor = good_color;
+        message.style.color           = good_color;
+        message.innerHTML             = '<img src="/static/tick.png" alt="Passwords Match!">';
+    }else{
+        //The passwords do not match.
+        //Set the color to the bad color and
+        //notify the user.
+        confirm.style.backgroundColor = bad_color;
+        message.style.color           = bad_color;
+        message.innerHTML             = '<img src="/static/publish_x.png" alt="Passwords Do Not Match!">';
+    }
+}
+</script>
+    <form action="/register" method="POST">
+      <label for="user">Username: </label>
+      <br>
+      <input type="text" id="user" name="user">
+      <br>
+      <label for="name">Name: </label>
+      <br>
+      <input type="text" id="name" name="name">
+      <br>
+      <label for="wechatID">Wechat ID: </label>
+      <br>
+      <input type="text" id="wechatID" name="wechatID">
+      <br>
+      <label for="password2">Password:</label>
+      <br>
+      <input type="password" name="password" id="password2" onkeyup="checkPass();">
+      <br>
+      <label for="confirm2">Confirm Password:</label>
+      <br>
+      <input type="password" name="confirm" id="confirm2" onkeyup="checkPass();">
+      <br>
+      <span id="confirm-message2" class="confirm-message"></span>
+      <br>
+      <br>
+      <input type="submit" value="Register">
+    </form>
+      <p>Admins will recieve form data and register you. </p>
+      <p>Voice your team preferences in the group chat or teams
+        will be assigned/balanced as admins see fit.</p>
+  </body>
+</html>

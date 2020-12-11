@@ -4,7 +4,7 @@ import datetime
 import os
 
 from challenges import Crypto, Forensics, LFI, LoginPanels, Misc, OSINT, Stenography
-from serverBackend import adminFunc, info, scorebot, data
+from serverBackend import adminFunc, info, scorebot, data, auth
 
 app = flask.Flask(__name__)
 port = int(os.getenv('PORT', 8080))
@@ -19,24 +19,14 @@ app.register_blueprint(Stenography.stenography.stenography, url_prefix='/Challen
 
 app.register_blueprint(adminFunc.adminFunc, url_prefix='/adminPanel')
 app.register_blueprint(info.info, url_prefix='/info')
+app.register_blueprint(auth.auth, url_prefix='')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
-def JWTValidate(authToken):
-	try:
-		payload = jwt.decode(auth_token, data.jwtKey)
-		g["team"] = payload["team"]
-		g["user"] = payload["user"]
-		return True
-	except jwt.ExpiredSignatureError:
-		return False
-	except jwt.InvalidTokenError:
-		return False
-
 @app.before_request
-def auth():
+def authCheck():
 	sessionToken = request.cookies.get('sessionToken')
-	if (not sessionToken) or (not JWTValidate(sessionToken)):
+	if (not sessionToken) or (not auth.JWTValidate(sessionToken)):
 		if "Challenges" in request.path:
 			return redirect("/login")
 	return

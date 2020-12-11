@@ -1,1 +1,1 @@
-from . import adminFunc, data, info, scorebot
+from . import adminFunc, data, info, scorebot, auth
