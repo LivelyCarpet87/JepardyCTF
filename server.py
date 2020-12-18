@@ -4,7 +4,7 @@ import datetime
 import os
 
 from challenges import Crypto, Forensics, LFI, LoginPanels, Misc, OSINT, Stenography
-from serverBackend import adminFunc, info, scorebot, data, auth
+from serverBackend import adminFunc, info, scorebot, data, auth, validation
 
 app = flask.Flask(__name__)
 port = int(os.getenv('PORT', 8080))
@@ -19,7 +19,7 @@ app.register_blueprint(Stenography.stenography.stenography, url_prefix='/Challen
 
 app.register_blueprint(adminFunc.adminFunc, url_prefix='/adminPanel')
 app.register_blueprint(info.info, url_prefix='/info')
-app.register_blueprint(auth.auth, url_prefix='')
+app.register_blueprint(login.login, url_prefix='/login')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
