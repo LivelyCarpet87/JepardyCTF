@@ -1,0 +1,133 @@
+<html>
+  <head>
+  </head>
+  <body>
+
+    <h1>Add Team</h1>
+    <form action="/adminPanel/addTeam" method="POST">
+      <label for="team">Team: </label>
+      <br>
+      <input type="text" id="team" name="team">
+      <br>
+
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+
+      <input type="submit" value="Submit">
+    </form>
+
+    <h1>Remove Team</h1>
+    <form action="/adminPanel/rmTeam" method="POST">
+      <label for="team">Team: </label>
+      <br>
+      <input type="text" id="team" name="team">
+      <br>
+
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+
+    <h1>Add Team Member</h1>
+    <form action="/adminPanel/addUser" method="POST">
+      <label for="user">Username: </label>
+      <br>
+      <input type="text" id="user" name="user">
+      <br>
+
+      <label for="name">Name: </label>
+      <br>
+      <input type="text" id="name" name="name">
+      <br>
+
+      <label for="password">Password: </label>
+      <br>
+      <input type="text" id="password" name="password">
+      <br>
+
+      <label for="team">Team: </label>
+      <br>
+      <input type="text" id="team" name="team">
+      <br>
+
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+
+      <input type="submit" value="Submit">
+    </form>
+    
+    <h1>Remove Team Member</h1>
+    <form action="/adminPanel/rmTeam" method="POST">
+      <label for="user">Username: </label>
+      <br>
+      <input type="text" id="user" name="user">
+      <br>
+
+      <label for="team">Team: </label>
+      <br>
+      <input type="text" id="team" name="team">
+      <br>
+
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+
+    <h1>Data</h1>
+    <form action="/adminPanel/data" method="POST">
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+
+    <h1>Logs</h1>
+    <form action="/adminPanel/history.log" method="POST">
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+
+    <h1>Registrations</h1>
+    <form action="/adminPanel/registration.txt" method="POST">
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+
+    <h1>Launch</h1>
+    <form action="/adminPanel/launch" method="POST">
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+
+    <h1>Load Data</h1>
+    <form action="/adminPanel/loadData" method="POST">
+      <label for="adminPass">Admin Pass:</label>
+      <br>
+      <input type="password" id="adminPass" name="adminPass">
+      <br>
+      <label for="manifest">Load Data:</label>
+      <br>
+      <input type="text" id="manifest" name="manifest">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

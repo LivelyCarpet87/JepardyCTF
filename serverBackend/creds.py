@@ -1,0 +1,2 @@
+adminPass="adminPwdHere"
+jwtKey="jwtKeyHere"

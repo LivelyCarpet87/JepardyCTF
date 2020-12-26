@@ -2,8 +2,13 @@ from flask import jsonify, send_file, Blueprint, render_template, abort, request
 
 from . import panel0, panel1
 
+
+import os
+template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 loginpanels = Blueprint('loginpanels', __name__,
-						template_folder='./LoginPanels/templates')
+						template_folder=template_folder,
+						static_folder=static_folder)
 
 @loginpanels.route('/',methods=['GET'])
 def base():
