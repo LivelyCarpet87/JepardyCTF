@@ -1,6 +1,15 @@
-import threading, datetime, logging, os
+import threading
+import datetime
+import logging
+import os
+import json
+import apscheduler
+from filelock import Timeout, FileLock
+
 import serverBackend.serverExceptions
 import serverBackend.creds as creds
+import serverBackend.scorebot as scorebot
+
 log = logging.getLogger('CTF')
 log.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -14,15 +23,15 @@ fh.setFormatter(formatter)
 log.addHandler(fh)
 
 teams={}
-teamDataLock = threading.Lock()
 flags={}
-flagsLock = threading.Lock()
+
+
 progressDefault={
 "loginpanel1":False
 }
 userDefault = {
 "name":"",
-"pass":"password"
+"pwd":"password"
 }
 mode = "jepardy"
 # mode = "koth"
@@ -47,60 +56,43 @@ manifest = {
 "hintReleaseCycle":hintReleaseCycle
 }
 
-def addTeam(teamName):
-    teamDataLock.acquire()
-    teams[team]={
-    "members":{},
-    "progress":progressDefault.copy(),
-    "score":0,
-    "lastScoreIncrease":datetime.datetime.now().isoformat()
-    }
-    teamDataLock.release()
+# Clients: Challenges
+# Marks a challenge as completed for the team (Jepardy storage) and marks the team as the king for the specified challenge (KotH storage)
+# Will lock teams file for the jepardy storage
+# Locks challengeGlobal file for the koth storage
+# Calls setChallengeProgress(Locks)
+# Returns none
+def solveChallenge(team,challengeName):
+	pass
 
-def rmTeam(teamName):
-    teamDataLock.acquire()
-    del teams[team]
-    teamDataLock.release()
+# Clients: Challenges, solveChallenge
+# Returns the state of the challenge for the team from the Jepardy storage
+def getChallengeProgress(team,challengeName):
+	pass
+
+# Clients: solveChallenge
+# Marks a challenge as needed for the team (Jepardy storage)
+# returns none
+def setChallengeProgress(team,challengeName,progress):
+	pass
+
+def addTeam(team):
+	pass
+
+def rmTeam(team):
+	pass
 
 def addMember(user,name,pwd,team):
-    teamDataLock.acquire()
-    teams[team]["members"][user] = userDefault
-    teams[team]["members"][user]["name"] = name
-    teams[team]["members"][user]["pwd"] = pwd
-    teamDataLock.release()
+	pass
 
 def rmMember(user,team):
-    teamDataLock.acquire()
-    del teams[team]["members"][user]
-    teamDataLock.release()
-
-def manifestUpdate():
-    global teams, flags, mode, progressDefault, userDefault, adminPass, jwtKey, gameStart, scorebotInterval, modifierDivider, gameUptime, hintReleaseCycle
-    manifest = {
-    "teams":teams,
-    "flags":flags,
-    "mode":mode,
-    "progressDefault":progressDefault,
-    "userDefault":userDefault,
-    "adminPass":creds.adminPass,
-    "jwtKey":creds.jwtKey,
-    "gameStart":gameStart,
-    "modifierDivider":modifierDivider,
-    "scorebotInterval":scorebotInterval,
-    "gameUptime":gameUptime,
-    "hintReleaseCycle":hintReleaseCycle
-    }
+	pass
 
 def manifestLoad(manifest):
-    global teams, flags, mode, progressDefault, userDefault, adminPass, jwtKey, gameStart, scorebotInterval, modifierDivider, gameUptime, hintReleaseCycle
-    manifest = json.loads(manifest)
-    teams = manifest.get("teams",teams)
-    flags = manifest.get("flags",flags)
-    jwtKey = manifest.get("jwtKey",creds.jwtKey)
-    adminPass = manifest.get("adminPass",creds.adminPass)
-    gameStart = manifest.get("gameStart",gameStart)
-    modifierDivider = manifest.get("modifierDivider",modifierDivider)
-    scorebotInterval = manifest.get("scorebotInterval",scorebotInterval)
-    gameUptime = manifest.get("gameUptime",gameUptime)
-    hintReleaseCycle = manifest.get("hintReleaseCycle",hintReleaseCycle)
-    scorebot.scheduler.reschedule_job('scorebot',trigger="interval", seconds=scorebotInterval)
+	pass
+
+def save():
+	pass
+
+def load():
+	pass

@@ -9,16 +9,14 @@ def incrementCounter():
 	data.gameUptime += data.scorebotInterval
 
 def tallyScore():
-    pass
+	pass
 
 def maintainers():
-    pass
+	pass
 
 def save():
 	#data.log.debug("Server data saved. ")
-	with open("."+os.sep+'serverData.json', 'w') as f:
-		data.manifestUpdate()
-		json.dump(data.manifest, f, default=lambda x: None)
+	data.save()
 
 def job_function():
 	now = datetime.datetime.now()
@@ -38,6 +36,7 @@ def backup():
 		json.dump(data.manifest, f, default=lambda x: None)
 
 def init():
+	data.load()
 	interval = data.scorebotInterval
 	scheduler.add_job(func=job_function, trigger="interval", seconds=interval, id='scorebot')
 	data.log.debug("Scorebot Started")
