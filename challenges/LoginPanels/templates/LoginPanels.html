@@ -1,7 +1,7 @@
 <head></head>
 <body>
   <h1>Login Panel #{{panel}}</h1>
-  <form action="Challenges/LoginPanels/panel{{panel}}" method="POST">
+  <form action="/Challenges/LoginPanels/panel{{panel}}" method="POST">
     <input type="hidden" id="path" name="path" value="{{path}}">
     <input type="hidden" id="action" name="action" value="login">
     <label for="user">Username: </label>
@@ -14,10 +14,10 @@
     <br>
     <input type="submit" value="Submit">
   </form>
-  {{% if debug is defined %}}
-    {{% if debugMode %}}
+  {% if debug is defined %}
+    {% if debugMode == "1" %}
       <h5>Debug Output</h5>
       <p>{{debug}}</p>
-    {{% endif %}}
-  {{% endif %}}
+    {% endif %}
+  {% endif %}
 </body>
