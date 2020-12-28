@@ -1,5 +1,6 @@
 import flask
 from flask import render_template,abort,redirect,request, make_response, g
+from werkzeug.local import LocalProxy
 import datetime
 import os
 
@@ -24,10 +25,10 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 scorebot.init()
 
+
 @app.before_request
 def authCheck():
-	sessionToken = request.cookies.get('sessionToken')
-	if (not sessionToken) or (not auth.JWTValidate(sessionToken)):
+	if (auth.JWTValidate()==(None,None)):
 		if "Challenges" in request.path:
 			abort(403,"You are not logged in. Please visit /login to log in.")
 	return

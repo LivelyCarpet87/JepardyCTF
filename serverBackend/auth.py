@@ -1,8 +1,8 @@
 import jwt
 from flask import render_template,abort,redirect,request, make_response, g, Blueprint
 import datetime, os
-
-from serverBackend import data,creds
+from werkzeug.local import LocalProxy
+from serverBackend import data,creds,auth
 
 template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
@@ -10,16 +10,17 @@ auth = Blueprint('', __name__,
 						template_folder=template_folder,
 						static_folder=static_folder)
 
-def JWTValidate(authToken):
+def JWTValidate():
+	sessionToken = request.cookies.get('sessionToken')
+	if sessionToken == None:
+		return None, None
 	try:
-		payload = jwt.decode(auth_token, creds.jwtKey)
-		g["team"] = payload["team"]
-		g["user"] = payload["user"]
-		return True
+		payload = jwt.decode(sessionToken, creds.jwtKey)
+		return payload["team"], payload["user"]
 	except jwt.ExpiredSignatureError:
-		return False
+		return None, None
 	except jwt.InvalidTokenError:
-		return False
+		return None, None
 
 def JWTGen(team,user):
 	payload = {
@@ -30,7 +31,7 @@ def JWTGen(team,user):
 		}
 	jwtToken = jwt.encode(
 			payload,
-			data.jwtKey,
+			creds.jwtKey,
 			algorithm='HS256'
 		)
 	return jwtToken
@@ -42,17 +43,19 @@ def login():
 		pwd = request.form["pwd"]
 
 		team = None
-		for teamName, teamData in teams:
-			for user, userData in teamData["members"]:
-				if userData["pass"] == pwd:
-					team = teamName
+		success = False
+		for teamName, teamData in data.teams.items():
+			if teamData["members"][user]["pwd"] == pwd:
+				team = teamName
+				success = True
+				break
 
 		if not success:
 			return render_template("login.html",message="No such username and password pair created. Please sign up from the home page.")
 		else:
 			response = make_response( render_template("login.html",message="Logged in as member of Team "+team+".",redirect=True) )
 			jwtToken = JWTGen(team,user)
-			response.set_cookie('jwtToken', jwtToken)
+			response.set_cookie('sessionToken', jwtToken)
 			return response
 	else:
 		return render_template("login.html")
