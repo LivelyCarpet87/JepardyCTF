@@ -1,0 +1,25 @@
+{
+  "mode": 1,
+  "_JepardyModeIs":1,
+  "_KothModeIs":2,
+  "JepardyModeIs":1,
+  "gameStart": false,
+  "scorebotInterval": 60,
+  "modifierTimeDivisor": 3600,
+  "modifierMaxCount":10,
+  "modifierPercentage":.1,
+  "gameUptime": 0,
+  "hintReleaseCycle":3600,
+  "firstSolveBonusPercentage":.2,
+  "defaultTeamData":{
+    "name":"TeamName",
+    "members":{},
+    "solved":{},
+    "KoTHScore":0
+  },
+  "defaultMemberData":{
+    "name":"Full Name",
+    "comms":"Email or some way to communicate",
+    "pwd":"password"
+  }
+}
