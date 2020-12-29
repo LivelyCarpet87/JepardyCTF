@@ -16,6 +16,8 @@ def JWTValidate():
 		return None, None
 	try:
 		payload = jwt.decode(sessionToken, creds.jwtKey)
+		data.currentUserTeam=payload["team"]
+		data.currentUser=payload["user"]
 		return payload["team"], payload["user"]
 	except jwt.ExpiredSignatureError:
 		return None, None

@@ -33,6 +33,12 @@ def authCheck():
 			abort(403,"You are not logged in. Please visit /login to log in.")
 	return
 
+@app.after_request
+def requestTmpClear(response):
+	data.currentUser = None
+	data.currentUserTeam = None
+	return response
+
 @app.route('/',methods=['GET','POST'])
 def home():
 	return render_template("home.html")
