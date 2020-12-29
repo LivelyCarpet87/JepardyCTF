@@ -3,15 +3,18 @@ from flask import jsonify, send_file, Blueprint, render_template, abort, request
 
 
 from . import panel0, panel1
-from serverBackend import data, auth
+from serverBackend import data
 
 import os
+
+type="loginPanels"
 template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 static_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
-loginpanels = Blueprint('loginpanels', __name__,
+loginpanels = Blueprint(type, __name__,
 						template_folder=template_folder,
 						static_folder=static_folder)
 
+data.enrollChallengeType("loginPanels")
 
 @loginpanels.route('/',methods=['GET'])
 def base():
@@ -24,7 +27,7 @@ def viewPanel0():
 		response = make_response(
 			render_template("LoginPanels.html",
 				panel=0,
-				solved=data.getChallengeProgress(auth.JWTValidate()[0],"loginpanel0"),
+				solved=data.getChallengeProgress(data.currentUserTeam,panel0.name,type),
 				debugMode=debugMode,
 				debug="N/A"
 			)
@@ -37,10 +40,10 @@ def viewPanel0():
 		pwd = request.form["pwd"]
 		success, debug, message = panel0.panel0(user,pwd)
 		if success:
-			data.solveChallenge(auth.JWTValidate()[0],"loginpanel0")
+			data.solveChallenge(data.currentUserTeam,panel0.name,type)
 		return render_template("LoginPanels.html",
 			panel=0,
-			solved=data.getChallengeProgress(auth.JWTValidate()[0],"loginpanel0"),
+			solved=data.getChallengeProgress(data.currentUserTeam,panel0.name,type),
 			debugMode=debugMode,
 			debug=debug,
 			message=message
@@ -53,7 +56,7 @@ def viewPanel1():
 		response = make_response(
 			render_template("LoginPanels.html",
 				panel=1,
-				solved=data.getChallengeProgress(auth.JWTValidate()[0],"loginpanel1"),
+				solved=data.getChallengeProgress(data.currentUserTeam,panel1.name,type),
 				debugMode=debugMode,
 				debug="N/A"
 			)
@@ -66,10 +69,10 @@ def viewPanel1():
 		pwd = request.form["pwd"]
 		success, debug, message = panel1.panel1(user,pwd)
 		if success:
-			data.solveChallenge(auth.JWTValidate()[0],"loginpanel1")
+			data.solveChallenge(data.currentUserTeam,panel1.name,type)
 		return render_template("LoginPanels.html",
 			panel=1,
-			solved=data.getChallengeProgress(auth.JWTValidate()[0],"loginpanel1"),
+			solved=data.getChallengeProgress(data.currentUserTeam,panel1.name,type),
 			debugMode=debugMode,
 			debug=debug,
 			message=message

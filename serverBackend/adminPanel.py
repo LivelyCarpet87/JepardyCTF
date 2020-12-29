@@ -26,7 +26,7 @@ def removeTeam():
     if request.form["adminPass"] != creds.adminPass:
         abort(403)
     team = request.form["team"]
-    if team not in data.teams.keys():
+    if data.existTeam(team) == False:
         abort(400,"Invalid team given.")
     data.rmTeam(team)
     return send_file("."+os.sep+"serverData.json")
@@ -37,11 +37,12 @@ def addUser():
         abort(403)
     user = request.form["user"]
     name = request.form["name"]
+    comms = request.form["comms"]
     pwd = request.form["password"]
     team = request.form["team"]
-    if team not in data.teams.keys():
+    if data.existTeam(team) == False:
         abort(400)
-    data.addMember(user,name,pwd,team)
+    data.addMember(user,name,comms,pwd,team)
     return send_file("."+os.sep+"serverData.json")
 
 @adminPanel.route('/rmUser',methods=['POST'])
@@ -50,7 +51,7 @@ def removeUser():
         abort(403)
     user = request.form["user"]
     team = request.form["team"]
-    if team not in data.teams.keys():
+    if data.existTeam(team) == False:
         abort("Invalid team given.",400)
     data.rmMember(user,team)
     return send_file("."+os.sep+"serverData.json")

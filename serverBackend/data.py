@@ -23,8 +23,8 @@ fh.setLevel(logging.INFO)
 fh.setFormatter(formatter)
 log.addHandler(fh)
 
-currentUser = ""
-currentUserTeam = ""
+currentUser = None
+currentUserTeam = None
 
 gameConstants = None
 
@@ -65,6 +65,10 @@ def getConstant(constant):
 	gameConstants = jsonFile("Data/Current/gameConstants.json")
 	return gameConstants[constant]
 
+def existTeam(team):
+	teamsMaster = jsonFile("Data/Current/Teams/teamsMaster.json")
+	return team in teamsMaster["existingTeams"]
+
 def updateLockDict():
 	teamsMaster = jsonFile("Data/Current/Teams/teamsMaster.json")
 	for team in teamsMaster["existingTeams"]:
@@ -95,6 +99,8 @@ def solveChallenge(team,challengeName,type):
 	if d[challengeName]["controlledBy"]!=team:
 		d[challengeName]["controlledBy"]=team
 		d[challengeName]["timeOfLastTakeover"]=timeStr
+	if d[challengeName]["firstSolveBy"]=="":
+		d[challengeName]["firstSolveBy"]=team
 	saveJsonFile("Data/Current/Challenges/"+type+".json",d)
 	lockDict[type].release()
 
@@ -108,9 +114,43 @@ def getChallengeProgress(team,challengeName,type):
 		d = jsonFile("Data/Current/Challenges/"+type+".json")
 		return d[challengeName]["controlledBy"]==team
 
+def enrollChallengeType(type):
+	lockDict["challengesMaster"].acquire()
+	c = jsonFile("Data/Current/Challenges/challengesMaster.json")
+	if type not in c["ExistingChallengeTypes"]:
+		c["ExistingChallengeTypes"].append(type)
+		d = {}
+		saveJsonFile("Data/Current/Challenges/"+type+".json",d)
+		saveJsonFile("Data/Current/Challenges/challengesMaster.json",c)
+	lockDict["challengesMaster"].release()
+	refresh()
+
+def enrollChallenge(type,challenge,flag,hints,value,otherData):
+	lockDict[type].acquire()
+	c = jsonFile("Data/Current/gameConstants.json")
+	d = jsonFile("Data/Current/Challenges/"+type+".json")
+	d[challenge] = c["defaultChallenge"].copy()
+	d[challenge]["flag"]=flag
+	d[challenge]["hints"]=hints
+	d[challenge]["value"]=value
+	d[challenge]["otherData"]=otherData
+	saveJsonFile("Data/Current/Challenges/"+type+".json",d)
+	lockDict[type].release()
+
 def checkFlag(type,challengeName,flagIn):
 	d = jsonFile("Data/Current/Challenges/"+type+".json")
 	return d[challengeName]["flag"]==flagIn
+
+def getFlag(type,challengeName):
+	d = jsonFile("Data/Current/Challenges/"+type+".json")
+	return d[challengeName]["flag"]
+
+def setFlag(type,challengeName,flag):
+	lockDict[type].acquire()
+	d = jsonFile("Data/Current/Challenges/"+type+".json")
+	d[challengeName]["flag"] = flag
+	saveJsonFile("Data/Current/Challenges/"+type+".json",d)
+	lockDict[type].release()
 
 def addTeam(teamName):
 	d = gameConstants["defaultTeamData"].copy()
@@ -122,6 +162,7 @@ def addTeam(teamName):
 		d["existingTeams"].append(teamName)
 		saveJsonFile("Data/Current/Teams/teamsMaster.json",d)
 	lockDict["teamsMaster"].release()
+	refresh()
 
 def rmTeam(team):
 	lockDict["teamsMaster"].acquire()
@@ -150,6 +191,7 @@ def rmMember(user,team):
 	lockDict[team].release()
 
 def userLogin(usr,pwd):
+	teamsMaster = jsonFile("Data/Current/Teams/teamsMaster.json")
 	for team in teamsMaster["existingTeams"]:
 		d = jsonFile("Data/Current/Teams/"+team+".json")
 		if usr in d["members"].keys() and d["members"][usr]["pwd"]==pwd:

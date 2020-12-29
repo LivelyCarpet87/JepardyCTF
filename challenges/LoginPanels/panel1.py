@@ -1,3 +1,5 @@
+from serverBackend import data
+
 def panel1(user,pwd):
 	command = "SELECT * FROM logins WHERE username ='" + user + "' AND password ='" + pwd + "'"
 	db = sqlite3.connect(":memory:")
@@ -23,3 +25,13 @@ def panel1(user,pwd):
 	db.rollback()
 	db.close()
 	return (message == "Login Success."), command, message
+
+name="panel1"
+
+data.enrollChallenge("loginPanels",name,"N/A",
+{
+    "1": "Irish names."
+},
+50,{
+    "filter":{}
+})
