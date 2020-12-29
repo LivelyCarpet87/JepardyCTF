@@ -4,9 +4,8 @@ import os
 import datetime
 import random
 from apscheduler.schedulers.background import BackgroundScheduler
-
-def incrementCounter():
-	data.gameUptime += data.scorebotInterval
+from filelock import Timeout, FileLock
+import atexit
 
 def tallyScore():
 	pass
@@ -14,34 +13,46 @@ def tallyScore():
 def maintainers():
 	pass
 
-def save():
-	#data.log.debug("Server data saved. ")
-	data.save()
+def incrementCounter():
+	data.incrementUptime()
 
 def job_function():
 	now = datetime.datetime.now()
 	early = now.replace(hour=7, minute=45, second=0, microsecond=0)
 	late = now.replace(hour=22, minute=30, second=0, microsecond=0)
-	if data.gameStart and (now > early or now < late):
+	if data.getConstant("gameStart") and (now > early or now < late):
 		incrementCounter()
 		tallyScore()
 		maintainers()
-	save()
+	refresh()
 
 def backup():
 	#data.log.debug("Server data saved. ")
 	now = datetime.datetime.now()
-	with open("."+os.sep+'backups'+os.sep+repr(now)+'.serverData.bak.json', 'w') as f:
-		data.manifestUpdate()
-		json.dump(data.manifest, f, default=lambda x: None)
+
+runScorebot = FileLock(os.path.join(os.getcwd(),"Data","scorebot.lock"), timeout=1)
+runBackup = FileLock(os.path.join(os.getcwd(),"Data","backupbot.lock"), timeout=1)
 
 def init():
-	data.load()
-	interval = data.scorebotInterval
-	scheduler.add_job(func=job_function, trigger="interval", seconds=interval, id='scorebot')
-	data.log.debug("Scorebot Started")
-	scheduler.add_job(func=backup, trigger="interval", seconds=3600, id='backup')
+	data.refresh()
+	interval = data.getConstant("scorebotInterval")
+	try:
+		runScorebot.acquire()
+		scheduler.add_job(func=job_function, trigger="interval", seconds=interval, id='scorebot')
+		data.log.debug("Scorebot Started")
+	except Timeout:
+		data.log.debug("Scorebot Already Started")
 
+	try:
+		runBackup.acquire()
+		scheduler.add_job(func=backup, trigger="interval", seconds=3600, id='backup')
+	except Timeout:
+		pass
+
+@atexit.register
+def releaseLocks():
+	runScorebot.release(force=True)
+	runBackup.release(force=True)
 
 scheduler = BackgroundScheduler()
 scheduler.start()

@@ -7,12 +7,11 @@
   "scorebotInterval": 60,
   "modifierTimeDivisor": 3600,
   "modifierMaxCount":10,
-  "modifierPercentage":.1,
+  "modifierPercentage":0.1,
   "gameUptime": 0,
   "hintReleaseCycle":3600,
-  "firstSolveBonusPercentage":.2,
+  "firstSolveBonusPercentage":0.2,
   "defaultTeamData":{
-    "name":"TeamName",
     "members":{},
     "solved":{},
     "KoTHScore":0

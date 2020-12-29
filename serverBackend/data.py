@@ -5,6 +5,7 @@ import os
 import json
 import apscheduler
 from filelock import Timeout, FileLock
+import atexit
 
 import serverBackend.serverExceptions
 import serverBackend.creds as creds
@@ -25,12 +26,7 @@ log.addHandler(fh)
 currentUser = ""
 currentUserTeam = ""
 
-gameConstants = jsonFile("Data/Current/gameConstants.json")
-
-def refresh():
-	global gameConstants
-	gameConstants = jsonFile("Data/Current/gameConstants.json")
-	updateLockDict()
+gameConstants = None
 
 def jsonFile(relPath):
 	f = open(os.path.join(os.getcwd(),os.path.normpath(relPath)))
@@ -40,7 +36,7 @@ def jsonFile(relPath):
 
 def saveJsonFile(relPath,contents):
 	f = open(os.path.join(os.getcwd(),os.path.normpath(relPath)),"w")
-	d = json.dumps(contents, indent=4)
+	d = json.dumps(contents, indent=2)
 	f.write(d)
 	f.close()
 
@@ -48,20 +44,36 @@ def getLockPath(relPath):
 	return os.path.join(os.getcwd(),"Data","Current",os.path.normpath(relPath))+".lock"
 
 lockDict={
-	"gameConstants": FileLock(getLockPath("gameConstants")),
-	"challengesMaster": FileLock(getLockPath("Challenges/challengesMaster.json")),
-	"teamsMaster": FileLock(getLockPath("Teams/teamsMaster.json"))
+	"gameConstants": FileLock(getLockPath("gameConstants"), timeout=60),
+	"challengesMaster": FileLock(getLockPath("Challenges/challengesMaster.json"), timeout=60),
+	"teamsMaster": FileLock(getLockPath("Teams/teamsMaster.json"), timeout=60)
 }
+
+def refresh():
+	global gameConstants
+	gameConstants = jsonFile("Data/Current/gameConstants.json")
+	updateLockDict()
+
+def incrementUptime():
+	lockDict["gameConstants"].acquire()
+	gameConstants = jsonFile("Data/Current/gameConstants.json")
+	gameConstants["gameUptime"] += gameConstants["scorebotInterval"]
+	saveJsonFile("Data/Current/gameConstants.json",gameConstants)
+	lockDict["gameConstants"].release()
+
+def getConstant(constant):
+	gameConstants = jsonFile("Data/Current/gameConstants.json")
+	return gameConstants[constant]
 
 def updateLockDict():
 	teamsMaster = jsonFile("Data/Current/Teams/teamsMaster.json")
 	for team in teamsMaster["existingTeams"]:
 		if team not in lockDict.keys():
-			lockDict[team] = FileLock(getLockPath("Teams/"+team))
+			lockDict[team] = FileLock(getLockPath("Teams/"+team), timeout=60)
 	challengesMaster = jsonFile("Data/Current/Challenges/challengesMaster.json")
 	for challenge in challengesMaster["ExistingChallengeTypes"]:
 		if challenge not in lockDict.keys():
-			lockDict[challenge] = FileLock(getLockPath("Challenges/"+challenge))
+			lockDict[challenge] = FileLock(getLockPath("Challenges/"+challenge), timeout=60)
 
 # Clients: Challenges
 # Marks a challenge as completed for the team (Jepardy storage) and marks the team as the king for the specified challenge (KotH storage)
@@ -102,7 +114,6 @@ def checkFlag(type,challengeName,flagIn):
 
 def addTeam(teamName):
 	d = gameConstants["defaultTeamData"].copy()
-	d["name"]=teamName
 	saveJsonFile("Data/Current/Teams/"+teamName+".json",d)
 	del d
 	lockDict["teamsMaster"].acquire()
@@ -137,3 +148,15 @@ def rmMember(user,team):
 	del d["members"][user]
 	saveJsonFile("Data/Current/Teams/"+team+".json",d)
 	lockDict[team].release()
+
+def userLogin(usr,pwd):
+	for team in teamsMaster["existingTeams"]:
+		d = jsonFile("Data/Current/Teams/"+team+".json")
+		if usr in d["members"].keys() and d["members"][usr]["pwd"]==pwd:
+			return team, True
+	return None, False
+
+@atexit.register
+def releaseLocks():
+	for lockName, lock in lockDict.items():
+		lock.release(force=True)

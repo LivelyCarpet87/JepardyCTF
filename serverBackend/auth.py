@@ -39,16 +39,12 @@ def JWTGen(team,user):
 @auth.route('/login',methods=['GET','POST'])
 def login():
 	if request.method == 'POST':
-		user = request.form["user"]
+		usr = request.form["user"]
 		pwd = request.form["pwd"]
 
 		team = None
 		success = False
-		for teamName, teamData in data.teams.items():
-			if teamData["members"][user]["pwd"] == pwd:
-				team = teamName
-				success = True
-				break
+		team, success = data.userLogin(usr,pwd)
 
 		if not success:
 			return render_template("login.html",message="No such username and password pair created. Please sign up from the home page.")
