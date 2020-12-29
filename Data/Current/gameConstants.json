@@ -4,7 +4,7 @@
   "_KothModeIs":2,
   "JepardyModeIs":1,
   "gameStart": false,
-  "scorebotInterval": 60,
+  "scorebotInterval": 10,
   "modifierTimeDivisor": 3600,
   "modifierMaxCount":10,
   "modifierPercentage":0.1,
