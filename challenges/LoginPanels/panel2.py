@@ -1,7 +1,8 @@
 from serverBackend import data
 import sqlite3,time
+import string, random
 
-def panel1(user,pwd):
+def panel2(user,pwd):
 	command = "SELECT * FROM logins WHERE username ='" + user + "' AND password ='" + pwd + "'"
 	db = sqlite3.connect(":memory:")
 	db.create_function("SLEEP", 1, time.sleep)
@@ -9,7 +10,8 @@ def panel1(user,pwd):
 	c = db.cursor()
 
 	c.execute("CREATE TABLE logins (username text, password text)")
-	c.execute("INSERT INTO logins VALUES (?,?)",("admin","password"))
+	adminPassword = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
+	c.execute("INSERT INTO logins VALUES (?,?)",("admin",adminPassword))
 	db.commit()
 	c = db.cursor()
 	try:
@@ -27,4 +29,4 @@ def panel1(user,pwd):
 	db.close()
 	return (message == "Login Success."), command, message
 
-name="panel1"
+name="panel2"
