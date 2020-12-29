@@ -24,7 +24,7 @@ def job_function():
 		incrementCounter()
 		tallyScore()
 		maintainers()
-	refresh()
+	data.refresh()
 
 def backup():
 	#data.log.debug("Server data saved. ")

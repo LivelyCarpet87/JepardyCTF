@@ -20,5 +20,17 @@
     "name":"Full Name",
     "comms":"Email or some way to communicate",
     "pwd":"password"
+  },
+  "defaultChallenge":{
+    "flag":"",
+    "controlledBy":"",
+    "timeOfLastTakeover":"",
+    "hints":{
+      "1":""
+    },
+    "pointValue":0,
+    "firstSolveBy":"",
+    "otherData":{
+    }
   }
 }

@@ -1,7 +1,6 @@
 import jwt
 from flask import render_template,abort,redirect,request, make_response, g, Blueprint
 import datetime, os
-from werkzeug.local import LocalProxy
 from serverBackend import data,creds,auth
 
 template_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -52,7 +51,7 @@ def login():
 			return render_template("login.html",message="No such username and password pair created. Please sign up from the home page.")
 		else:
 			response = make_response( render_template("login.html",message="Logged in as member of Team "+team+".",redirect=True) )
-			jwtToken = JWTGen(team,user)
+			jwtToken = JWTGen(team,usr)
 			response.set_cookie('sessionToken', jwtToken)
 			return response
 	else:

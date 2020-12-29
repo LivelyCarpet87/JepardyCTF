@@ -1,6 +1,12 @@
 <head></head>
 <body>
-  <h1>Login Panel #{{panel}}</h1>
+  {% if solved is defined %}
+    {% if solved %}
+    <h1>Login Panel #{{panel}} - Solved</h1>
+    {% else %}
+    <h1>Login Panel #{{panel}}</h1>
+    {% endif %}
+  {% endif %}
   <form action="/Challenges/LoginPanels/panel{{panel}}" method="POST">
     <input type="hidden" id="path" name="path" value="{{path}}">
     <input type="hidden" id="action" name="action" value="login">

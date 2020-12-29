@@ -3,3 +3,5 @@
 *.log
 serverData.json
 *.lock
+Data/Current/Challenges/**
+Data/Current/Teams/**
