@@ -14,11 +14,21 @@ loginpanels = Blueprint(type, __name__,
 						template_folder=template_folder,
 						static_folder=static_folder)
 
-data.enrollChallengeType("loginPanels")
+data.enrollChallengeType(type)
 
 @loginpanels.route('/',methods=['GET'])
 def base():
 	return render_template("LoginPanelsListing.html")
+
+data.enrollChallenge("loginPanels",panel0.name,"N/A",
+{
+    "1": "This page is just a sanity test.",
+    "2": "Just try entering anything!",
+    "3": "Why would you ever need more hints?"
+},
+0,{
+    "filter":{}
+})
 
 @loginpanels.route('/panel0',methods=['GET','POST'])
 def viewPanel0():
@@ -48,6 +58,14 @@ def viewPanel0():
 			debug=debug,
 			message=message
 		)
+
+data.enrollChallenge("loginPanels",panel1.name,"N/A",
+{
+    "1": "Irish names."
+},
+50,{
+    "filter":{}
+})
 
 @loginpanels.route('/panel1',methods=['GET','POST'])
 def viewPanel1():

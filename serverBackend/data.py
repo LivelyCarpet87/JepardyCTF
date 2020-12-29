@@ -10,6 +10,7 @@ import atexit
 import serverBackend.serverExceptions
 import serverBackend.creds as creds
 import serverBackend.scorebot as scorebot
+import time
 
 log = logging.getLogger('CTF')
 log.setLevel(logging.DEBUG)
@@ -126,6 +127,9 @@ def enrollChallengeType(type):
 	refresh()
 
 def enrollChallenge(type,challenge,flag,hints,value,otherData):
+	while type not in lockDict.keys():
+		time.sleep(1)
+		refresh()
 	lockDict[type].acquire()
 	c = jsonFile("Data/Current/gameConstants.json")
 	d = jsonFile("Data/Current/Challenges/"+type+".json")
@@ -136,6 +140,7 @@ def enrollChallenge(type,challenge,flag,hints,value,otherData):
 	d[challenge]["otherData"]=otherData
 	saveJsonFile("Data/Current/Challenges/"+type+".json",d)
 	lockDict[type].release()
+	refresh()
 
 def checkFlag(type,challengeName,flagIn):
 	d = jsonFile("Data/Current/Challenges/"+type+".json")
