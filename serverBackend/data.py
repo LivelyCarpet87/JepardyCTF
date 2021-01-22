@@ -157,6 +157,10 @@ def setFlag(type,challengeName,flag):
 	saveJsonFile("Data/Current/Challenges/"+type+".json",d)
 	lockDict[type].release()
 
+def getOtherData(type,challengeName):
+	d = jsonFile("Data/Current/Challenges/"+type+".json")
+	return d[challengeName]["otherData"]
+
 def addTeam(teamName):
 	d = gameConstants["defaultTeamData"].copy()
 	saveJsonFile("Data/Current/Teams/"+teamName+".json",d)
